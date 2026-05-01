@@ -2184,32 +2184,37 @@
             localStorage.setItem('productStocks', JSON.stringify(savedStocks));
         }
 
-        // Функция для генерации и сохранения даты доставки
-        function generateAndSaveDeliveryDate(productId) {
-            const deliveryDates = loadDeliveryDates();
-            
-            // Если дата уже сгенерирована для этого товара, возвращаем ее
-            if (deliveryDates[productId]) {
-                return deliveryDates[productId];
-            }
-            
-            const today = new Date();
-            const daysToAdd = Math.floor(Math.random() * 7) + 1; // От 1 до 7 дней
-            const deliveryDate = new Date(today);
-            deliveryDate.setDate(today.getDate() + daysToAdd);
-            
-            // Форматируем дату
-            const day = deliveryDate.getDate();
-            const month = deliveryDate.getMonth() + 1;
-            
-            const dateString = `${day} ${getMonthName(month)}`;
-            
-            // Сохраняем дату для этого товара
-            deliveryDates[productId] = dateString;
-            saveDeliveryDates(deliveryDates);
-            
-            return dateString;
-        }
+        // Функция для генерации даты доставки (всегда относительно текущей даты)
+function generateAndSaveDeliveryDate(productId) {
+    // Проверяем, не сохраняли ли мы ДЕНЬ НЕДЕЛИ для этого товара (чтобы одинаковые товары показывали одинаковый срок)
+    const deliveryCache = localStorage.getItem('productDeliveryDaysCache');
+    let deliveryDaysMap = deliveryCache ? JSON.parse(deliveryCache) : {};
+    
+    let daysToAdd;
+    
+    // Если для этого товара уже сгенерировано количество дней - используем его
+    if (deliveryDaysMap[productId] !== undefined) {
+        daysToAdd = deliveryDaysMap[productId];
+    } else {
+        // Генерируем случайное количество дней от 1 до 7
+        daysToAdd = Math.floor(Math.random() * 7) + 1;
+        deliveryDaysMap[productId] = daysToAdd;
+        localStorage.setItem('productDeliveryDaysCache', JSON.stringify(deliveryDaysMap));
+    }
+    
+    // ВАЖНО: вычисляем дату ОТ СЕГОДНЯШНЕГО ДНЯ
+    const today = new Date();
+    const deliveryDate = new Date(today);
+    deliveryDate.setDate(today.getDate() + daysToAdd);
+    
+    // Форматируем дату
+    const day = deliveryDate.getDate();
+    const month = deliveryDate.getMonth() + 1;
+    
+    const dateString = `${day} ${getMonthName(month)}`;
+    
+    return dateString;
+}
         
         // Функция для получения названия месяца
         function getMonthName(month) {
@@ -2262,6 +2267,23 @@
             // Обновляем даты доставки для видимых товаров
             updateDeliveryDates();
         }
+
+// Очищаем устаревшие даты доставки при загрузке страницы (только если сегодня число изменилось)
+function clearOldDeliveryDates() {
+    const lastClearDate = localStorage.getItem('deliveryDatesLastClear');
+    const todayStr = new Date().toDateString();
+    
+    if (lastClearDate !== todayStr) {
+        // Удаляем старые даты доставки
+        localStorage.removeItem('productDeliveryDates');
+        // Сохраняем дату последней очистки
+        localStorage.setItem('deliveryDatesLastClear', todayStr);
+        console.log('Даты доставки обновлены относительно сегодняшнего дня');
+    }
+}
+
+// Вызовите эту функцию в DOMContentLoaded
+clearOldDeliveryDates();
 
         // Проверка авторизации пользователя
         function checkAuthStatus() {

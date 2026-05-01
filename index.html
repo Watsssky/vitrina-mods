@@ -5,72 +5,347 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Витрина моды - Интернет-магазин одежды</title>
     <link rel="stylesheet" href="main.css">
-    <link rel="icon" href="img/icon.png">
+    <style>
+        .stock-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stock-quantity {
+            font-weight: bold;
+            color: #98205E;
+            font-size: 18px;
+        }
+        
+        .stock-control-btn {
+            background: #98205E;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        
+        .stock-control-btn:hover {
+            background: #7a1a4b;
+        }
+        
+        .stock-control-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .stock-save-btn {
+            background-color: #98205E;
+            color: white;
+            border: 1px solid #98205E;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        
+        .stock-save-btn:hover {
+            background-color: #7a1a4b;
+        }
+        
+        .admin-controls {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #444;
+        }
+                /* Стили для модального окна новостей */
+        .news-modal-content {
+            max-width: 900px !important;
+            width: 90% !important;
+            background: #ffffff !important;
+            border-radius: 12px !important;
+        }
+
+        .news-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #000000;
+            text-align: center;
+        }
+
+        .news-title span {
+            color: #000000;
+        }
+
+        .news-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .news-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #98205E;
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .news-card:hover {
+            transform: translateY(3px);
+        }
+
+        .news-card-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: #333;
+        }
+
+        .news-card-content {
+            padding: 20px;
+        }
+
+        .news-card-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #98205E;
+        }
+
+        .news-card-date {
+            font-size: 14px;
+            color: #98205E;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-card-text {
+            font-size: 16px;
+            color: #000000;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .news-card-link {
+            color: #98205E;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-card-link:hover {
+            color: #ff6b9d;
+        }
+
+        .loading-news {
+            text-align: center;
+            padding: 40px;
+            color: #98205E;
+            font-size: 18px;
+        }
+
+        .no-news {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-size: 18px;
+        }
+
+        .news-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .news-container::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .news-container::-webkit-scrollbar-thumb {
+            background: #98205E;
+            border-radius: 4px;
+        }
+
+        .news-container::-webkit-scrollbar-thumb:hover {
+            background: #7a1a4b;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="container header-container">
-            <a href="#" class="logo" onclick="showMainPage()">
-                <img src="img/logo%20%D0%B1%D0%B5%D0%BB%D1%8B%D0%B9.png" alt="Витрина моды">
-            </a>
-            <div class="nav-container">
-                <ul class="nav-links">
-                    <li><a href="#" onclick="showMainPage()">Главная</a></li>
-                    <li class="dropdown">
-                        <a href="#">Каталог</a>
-                        <div class="dropdown-content">
-                            <a href="#mens" onclick="filterCategory('mens')">Мужская</a>
-                            <a href="#womens" onclick="filterCategory('womens')">Женская</a>
-                            <a href="#kids" onclick="filterCategory('kids')">Детская</a>
-                            <a href="#accessories" onclick="filterCategory('accessories')">Аксессуары</a>
-                            <a href="#hats" onclick="filterCategory('hats')">Головные уборы</a>
-                        </div>
-                    </li>
-                    <li><a href="#about" onclick="scrollToSection('about')">О нас</a></li>
-                    <li><a href="#footer" onclick="scrollToSection('footer')">Контакты</a></li>
-                </ul>
-                <div class="admin-buttons" id="adminButtons" style="display: none;">
-                    <a href="#" class="admin-button" onclick="showModal('transactionsModal')">Транзакции</a>
-                    <a href="vk.html" class="admin-button">Посты</a>
-                </div>
-            </div>
-            <div class="header-actions">
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Поиск товаров..." id="searchInput" autocomplete="off" name="search">
-                    <div class="search-results" id="searchResults"></div>
-                </div>
-                
-                <div class="auth-buttons" id="authButtons">
-                    <a href="#" onclick="showModal('loginModal')">Войти</a>
-                    <a href="#" onclick="showModal('registerModal')">Регистрация</a>
-                </div>
-                <div class="user-profile" id="userProfile" style="display: none;">
-                    <div class="user-avatar" id="userAvatar">И</div>
-                    <div class="user-name" id="userName">Иван</div>
-                </div>
-                <div class="wishlist-icon" id="wishlistIcon">
-                    <a href="#" onclick="showModal('wishlistModal')" style="color: inherit; text-decoration: none;"><img src="img/избранное.svg" width="30px" alt="избранное"></a>
-                    <span class="wishlist-count">0</span>
-                </div>
-                <div class="cart-icon" id="cartIcon">
-                    <a href="#" onclick="showModal('cartModal')" style="color: inherit; text-decoration: none;"><img src="img/корзина.svg" width="30px" alt="корзина"></a>
-                    <span class="cart-count">0</span>
-                </div>
+<header>
+    <div class="container header-container">
+        <!-- Кнопка бургер для мобильного меню -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <a href="#" class="logo" onclick="showMainPage()">
+            <img src="img/logo%20%D0%B1%D0%B5%D0%BB%D1%8B%D0%B9.png" alt="Витрина моды">
+        </a>
+        
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#" onclick="showMainPage()">Главная</a></li>
+                <li class="dropdown">
+                    <a href="#">Каталог</a>
+                    <div class="dropdown-content">
+                        <a href="#mens" onclick="filterCategory('mens')">Мужская</a>
+                        <a href="#womens" onclick="filterCategory('womens')">Женская</a>
+                        <a href="#kids" onclick="filterCategory('kids')">Детская</a>
+                        <a href="#accessories" onclick="filterCategory('accessories')">Аксессуары</a>
+                        <a href="#hats" onclick="filterCategory('hats')">Головные уборы</a>
+                    </div>
+                </li>
+                <li><a href="#" onclick="showNewsModal()">Новости</a></li>
+                <li><a href="#about" onclick="scrollToSection('about')">О нас</a></li>
+                <li><a href="#footer" onclick="scrollToSection('footer')">Контакты</a></li>
+            </ul>
+            <div class="admin-buttons" id="adminButtons" style="display: none;">
+                <a href="#" class="admin-button" onclick="showModal('transactionsModal')">Транзакции</a>
+                <a href="vk.html" class="admin-button">Посты</a>
             </div>
         </div>
-    </header>
+        
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Поиск товаров..." id="searchInput" autocomplete="off" name="search">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            
+            <div class="auth-buttons" id="authButtons">
+                <a href="#" onclick="showModal('loginModal')">Войти</a>
+                <a href="#" onclick="showModal('registerModal')">Регистрация</a>
+            </div>
+            <div class="user-profile" id="userProfile" style="display: none;">
+                <div class="user-avatar" id="userAvatar">И</div>
+                <div class="user-name" id="userName">Иван</div>
+            </div>
+            <div class="wishlist-icon" id="wishlistIcon">
+                <a href="#" onclick="showModal('wishlistModal')" style="color: inherit; text-decoration: none;"><img src="img/избранное.svg" width="30px" alt="избранное"></a>
+                <span class="wishlist-count">0</span>
+            </div>
+            <div class="cart-icon" id="cartIcon">
+                <a href="#" onclick="showModal('cartModal')" style="color: inherit; text-decoration: none;"><img src="img/корзина.svg" width="30px" alt="корзина"></a>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Мобильное выдвижное меню -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <button class="mobile-menu-close" id="mobileMenuClose">&times;</button>
+        
+    </div>
+    
+    <div class="mobile-nav">
+        <!-- Авторизованный пользователь (скрыто по умолчанию) -->
+        <div class="mobile-user-section" id="mobileUserSection" style="display: none;">
+    <div class="mobile-user-info" id="mobileUserProfileBtn" onclick="closeMobileMenu(); showModal('profileModal')" style="cursor: pointer;">
+        <div class="mobile-user-avatar" id="mobileUserAvatar">И</div>
+        <span id="mobileUserName">Иван</span>
+    </div>
+</div>
+        
+
+        
+        <!-- Основные ссылки -->
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); showMainPage()">Главная</a>
+        </div>
+        
+        <!-- Каталог с выпадающим подменю -->
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-nav-link" id="mobileCatalogToggle">Каталог ▼</a>
+            <div class="mobile-submenu" id="mobileCatalogSubmenu">
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); filterCategory('mens')">Мужская одежда</a>
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); filterCategory('womens')">Женская одежда</a>
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); filterCategory('kids')">Детская одежда</a>
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); filterCategory('accessories')">Аксессуары</a>
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); filterCategory('hats')">Головные уборы</a>
+            </div>
+        </div>
+        
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); showNewsModal()">Новости</a>
+        </div>
+        
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); scrollToSection('about')">О нас</a>
+        </div>
+        
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); scrollToSection('footer')">Контакты</a>
+        </div>
+        
+        <!-- Корзина и избранное -->
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-cart-link" onclick="closeMobileMenu(); showModal('cartModal')">
+                <span>🛒 Корзина</span>
+                <span class="mobile-cart-count" id="mobileCartCount">0</span>
+            </a>
+        </div>
+        
+        <div class="mobile-nav-item">
+            <a href="#" class="mobile-wishlist-link" onclick="closeMobileMenu(); showModal('wishlistModal')">
+                <span>❤️ Избранное</span>
+                <span class="mobile-wishlist-count" id="mobileWishlistCount">0</span>
+            </a>
+        </div>
+        
+        <!-- Админ-раздел (скрыт по умолчанию) -->
+        <div class="mobile-admin-section" id="mobileAdminSection" style="display: none;">
+            <div class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); showModal('transactionsModal')">📋 Транзакции</a>
+            </div>
+            <div class="mobile-nav-item">
+                <a href="vk.html" class="mobile-nav-link" onclick="closeMobileMenu()">📝 Посты</a>
+            </div>
+        </div>
+        
+        <!-- Неавторизованный пользователь (показываем по умолчанию) -->
+        <div class="mobile-auth-section" id="mobileAuthSection">
+            <div class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); showModal('loginModal')">Войти</a>
+            </div>        
+            <div class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); showModal('registerModal')">Регистрация</a>
+            </div>
+        </div>
+
+        <!-- Выход (для авторизованных) -->
+        <div class="mobile-nav-item" id="mobileLogoutItem" style="display: none;">
+            <a href="#" class="mobile-nav-link" onclick="closeMobileMenu(); logout()">🚪 Выйти</a>
+        </div>
+    </div>
+</div>
 
     <!-- Main Page Content -->
     <div id="mainPage">
         <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <h1>⠀⠀⠀⠀⠀⠀⠀<span⠀⠀⠀⠀⠀⠀⠀⠀⠀</span></h1>
-                <p>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</p>
-                <p>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</p>
-            </div>
-        </section>
+<section class="hero">
+    <div class="container">
+        <h1>⠀⠀⠀⠀⠀⠀⠀<span⠀⠀⠀⠀⠀⠀⠀⠀⠀</span></h1>
+        <p>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</p>
+        <p>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</p>
+    </div>
+</section>
         <!-- Products Section -->
         <section class="products" id="products">
             <div class="container">
@@ -85,7 +360,7 @@
                             <!-- Product 1 -->
                             <div class="product-card" data-category="mens" data-name="Футболка Puma мужская" data-id="1" onclick="showProductModal(1)">
                                 <div class="product-image">
-                                    <img src="https://static.street-beat.ru/upload/resize_cache/iblock/81e/666_666_1/28jujdmf0a8ua8bunfh9ax94npq8fewv.jpg" alt="Футболка Puma мужская">
+                                    <img src="img/ФутболкаPuma/1.webp" alt="Футболка Puma мужская">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Футболка Puma мужская</h3>
@@ -102,7 +377,7 @@
                             <!-- Product 2 -->
                             <div class="product-card" data-category="mens" data-name="Джинсы Levi's" data-id="2" onclick="showProductModal(2)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-z/wc1000/7663205231.jpg" alt="Джинсы Levi's">
+                                    <img src="img/ДжинсыLevis/1.webp" alt="Джинсы Levi's">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Джинсы Levi's</h3>
@@ -119,7 +394,7 @@
                             <!-- Product 3 -->
                             <div class="product-card" data-category="mens" data-name="Куртка Nike" data-id="3" onclick="showProductModal(3)">
                                 <div class="product-image">
-                                    <img src="https://static.street-beat.ru/upload/resize_cache/iblock/0cb/666_666_1/4pdv2o6x1xt4tt01sb1gujidrz2yywvo.jpg" alt="Куртка Nike">
+                                    <img src="img/КурткаNike/1.webp" alt="Куртка Nike">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Куртка Nike</h3>
@@ -136,7 +411,7 @@
                             <!-- Product 4 -->
                             <div class="product-card" data-category="mens" data-name="Свитшот Adidas" data-id="4" onclick="showProductModal(4)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-i/wc1000/8149790034.jpg" alt="Свитшот Adidas">
+                                    <img src="img/СвитшотAdidas/1.webp" alt="Свитшот Adidas">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Свитшот Adidas</h3>
@@ -160,7 +435,7 @@
                             <!-- Product 1 -->
                             <div class="product-card" data-category="womens" data-name="Платье Prada" data-id="5" onclick="showProductModal(5)">
                                 <div class="product-image">
-                                    <img src="https://main-cdn.sbermegamarket.ru/big1/hlr-system/105/557/745/312/912/13/100028009058b0.jpg" alt="Платье Prada">
+                                    <img src="img/ПлатьеPrada/1.jpg" alt="Платье Prada">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Платье Prada</h3>
@@ -177,7 +452,7 @@
                             <!-- Product 2 -->
                             <div class="product-card" data-category="womens" data-name="Блузка Twinset" data-id="6" onclick="showProductModal(6)">
                                 <div class="product-image">
-                                    <img src="https://twinset.ru/upload/iblock/489/489d3b2791c2f3434463c16f89d85154.jpg" alt="Блузка Twinset женская">
+                                    <img src="img/БлузкаTwinset/1.jpg" alt="Блузка Twinset женская">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Блузка Twinset женская</h3>
@@ -194,7 +469,7 @@
                             <!-- Product 3 -->
                             <div class="product-card" data-category="womens" data-name="Юбка Juun.J" data-id="7" onclick="showProductModal(7)">
                                 <div class="product-image">
-                                    <img src="https://staticswa.golden-line.ru/images/catalog/JW5827W055_chernyi/JW5827W055_chernyi_1.jpg?v=1762433757" alt="Юбка Juun.J">
+                                    <img src="img/ЮбкаJuun/1.jpg" alt="Юбка Juun.J">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Юбка Juun.J</h3>
@@ -211,7 +486,7 @@
                             <!-- Product 4 -->
                             <div class="product-card" data-category="womens" data-name="Костюм VASSA женский" data-id="8" onclick="showProductModal(8)">
                                 <div class="product-image">
-                                    <img src="https://ba77b47c-88c1-44f2-87c2-1661d6cad36a.selcdn.net/media/products/2025/11/Vassa.31.10_1429.jpg" alt="Костюм VASSA женский">
+                                    <img src="img/КостюмVassa/1.jpg" alt="Костюм VASSA женский">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Костюм VASSA женский</h3>
@@ -235,7 +510,7 @@
                             <!-- Product 1 -->
                             <div class="product-card" data-category="kids" data-name="Футболка Tom Tailor детская" data-id="9" onclick="showProductModal(9)">
                                 <div class="product-image">
-                                    <img src="https://img.detmir.st/ktiPY65WRFoQpNZsYo0MlKHz7je9ozyB1_C9urMiQXc/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvNUd3TEtNMjRfallyQjVLVV9rbHBRNUZxQjMxNjN5TWV5RGZ6SzdzTDdFRT0uanBlZw.webp" alt="Футболка Tom Tailor детская">
+                                    <img src="img/ФутболкаTomTailor/1.webp" alt="Футболка Tom Tailor детская">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Футболка Tom Tailor детская</h3>
@@ -252,7 +527,7 @@
                             <!-- Product 2 -->
                             <div class="product-card" data-category="kids" data-name="Джинсы Futurino детские" data-id="10" onclick="showProductModal(10)">
                                 <div class="product-image">
-                                    <img src="https://img.detmir.st/zDXcPh0v5xsQCseZIq_tUt1lcRooC9AutOTvWylakUk/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvcFJmUkNON2c4aXVkZUJMR05Zck5Kd09JY0N6YmZNczFhbkd2cHl1Y3puQT0uanBlZw.webp" alt="Джинсы Futurino детские">
+                                    <img src="img/ДжинсыFuturino/1.webp" alt="Джинсы Futurino детские">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Джинсы Futurino детские</h3>
@@ -269,7 +544,7 @@
                             <!-- Product 3 -->
                             <div class="product-card" data-category="kids" data-name="Куртка Котофей детская" data-id="11" onclick="showProductModal(11)">
                                 <div class="product-image">
-                                    <img src="https://kotofey.ru/images/cms/thumbs/99eeeb2116ba82928bb6c54f648b6db017048550/1863c1e5527711ee8c00ac1f6bd8bc11_1e723f71527711ee8c00ac1f6bd8bc11_556_555_jpg_5_80.jpg" alt="Куртка Котофей детская">
+                                    <img src="img/КурткаКотофей/1.jpg" alt="Куртка Котофей детская">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Куртка Котофей детская</h3>
@@ -286,7 +561,7 @@
                             <!-- Product 4 -->
                             <div class="product-card" data-category="kids" data-name="Свитшот artie детский" data-id="12" onclick="showProductModal(12)">
                                 <div class="product-image">
-                                    <img src="https://nsk-basket-cdn-07.geobasket.ru/vol4982/part498294/498294680/images/big/1.webp" alt="Свитшот artie детский">
+                                    <img src="img/СвитшотArtie/1.webp" alt="Свитшот artie детский">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Свитшот artie детский</h3>
@@ -310,7 +585,7 @@
                             <!-- Product 1 -->
                             <div class="product-card" data-category="accessories" data-name="Рюкзак Nike" data-id="13" onclick="showProductModal(13)">
                                 <div class="product-image">
-                                    <img src="https://static.street-beat.ru/upload/resize_cache/iblock/744/666_666_1/eap3l6f7hora2td6a2vecmo40z0c4ljp.jpg" alt="Рюкзак Nike">
+                                    <img src="img/РюкзакNike/1.jpg" alt="Рюкзак Nike">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Рюкзак Nike</h3>
@@ -327,7 +602,7 @@
                             <!-- Product 2 -->
                             <div class="product-card" data-category="accessories" data-name="Часы G-SHOCK" data-id="14" onclick="showProductModal(14)">
                                 <div class="product-image">
-                                    <img src="https://static.alltime.ru/obj/catalog/watch/casio/img/big/GA-2100-1AER.jpg" alt="Часы G-SHOCK">
+                                    <img src="img/ЧасыGshok/1.jpg" alt="Часы G-SHOCK">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Часы G-SHOCK</h3>
@@ -344,7 +619,7 @@
                             <!-- Product 3 -->
                             <div class="product-card" data-category="accessories" data-name="Очки Uvex" data-id="15" onclick="showProductModal(15)">
                                 <div class="product-image">
-                                    <img src="https://cdn.sportmaster.ru/upload/mdm/media_content/resize/4c3/1008_800_e9d2/51540170299.jpg" alt="Очки Uvex">
+                                    <img src="img/ОчкиUvex/1.jpg" alt="Очки Uvex">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Очки Uvex</h3>
@@ -361,7 +636,7 @@
                             <!-- Product 4 -->
                             <div class="product-card" data-category="accessories" data-name="Кошелек ALPAKA" data-id="16" onclick="showProductModal(16)">
                                 <div class="product-image">
-                                    <img src="https://static.insales-cdn.com/images/products/1/2319/546679055/zip-pouchv2_0000_HeroBlack_1020x1200.png" alt="Кошелек ALPAKA">
+                                    <img src="img/КошелекAlpaka/1.png" alt="Кошелек ALPAKA">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Кошелек ALPAKA</h3>
@@ -385,7 +660,7 @@
                             <!-- Product 1 -->
                             <div class="product-card" data-category="hats" data-name="Кепка Adidas" data-id="17" onclick="showProductModal(17)">
                                 <div class="product-image">
-                                    <img src="https://static.street-beat.ru/upload/resize_cache/iblock/380/666_666_1/ry3fsqil64la4x8kmzzhedmzqnlmwzir.jpg" alt="Кепка Adidas">
+                                    <img src="img/КепкаAdidas/1.jpg" alt="Кепка Adidas">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Кепка Adidas</h3>
@@ -402,7 +677,7 @@
                             <!-- Product 2 -->
                             <div class="product-card" data-category="hats" data-name="Бейсболка Nike" data-id="18" onclick="showProductModal(18)">
                                 <div class="product-image">
-                                    <img src="https://a.lmcdn.ru/product/R/T/RTLAEK547401_28546884_3_v1_2x.jpg" alt="Бейсболка Nike">
+                                    <img src="img/БейсболкаNike/1.jpg" alt="Бейсболка Nike">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Бейсболка Nike</h3>
@@ -419,7 +694,7 @@
                             <!-- Product 3 -->
                             <div class="product-card" data-category="hats" data-name="Шапка HUGO" data-id="19" onclick="showProductModal(19)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-r/wc1000/7669933443.jpg" alt="Шапка HUGO">
+                                    <img src="img/ШапкаHugo/1.webp" alt="Шапка HUGO">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Шапка HUGO</h3>
@@ -436,7 +711,7 @@
                             <!-- Product 4 -->
                             <div class="product-card" data-category="hats" data-name="Панама Reebok" data-id="20" onclick="showProductModal(20)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-3/wc1000/8351276727.jpg" alt="Панама Reebok">
+                                    <img src="img/ПанамаReebok/1.webp" alt="Панама Reebok">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Панама Reebok</h3>
@@ -463,7 +738,7 @@
                             <!-- Product 21 -->
                             <div class="product-card" data-category="hats" data-name="Шапка New Era" data-id="21" onclick="showProductModal(21)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-a/wc1000/6937178151.jpg" alt="Шапка New Era">
+                                    <img src="img/ШапкаNewera/1.webp" alt="Шапка New Era">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Шапка New Era</h3>
@@ -480,7 +755,7 @@
                             <!-- Product 22 -->
                             <div class="product-card" data-category="hats" data-name="Кепка Puma" data-id="22" onclick="showProductModal(22)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6948817828.jpg" alt="Кепка Puma">
+                                    <img src="img/КепкаPuma/1.webp" alt="Кепка Puma">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Кепка Puma</h3>
@@ -497,7 +772,7 @@
                             <!-- Product 23 -->
                             <div class="product-card" data-category="hats" data-name="Бейсболка Under Armour" data-id="23" onclick="showProductModal(23)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6937178229.jpg" alt="Бейсболка Under Armour">
+                                    <img src="img/БейсболкаUnderarmour/1.webp" alt="Бейсболка Under Armour">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Бейсболка Under Armour</h3>
@@ -514,7 +789,7 @@
                             <!-- Product 24 -->
                             <div class="product-card" data-category="hats" data-name="Панама Lacoste" data-id="24" onclick="showProductModal(24)">
                                 <div class="product-image">
-                                    <img src="https://ir-3.ozone.ru/s3/multimedia-1-8/wc1000/6937178275.jpg" alt="Панама Lacoste">
+                                    <img src="img/ПанамаLacoste/1.webp" alt="Панама Lacoste">
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-title">Панама Lacoste</h3>
@@ -554,15 +829,15 @@
                     </div>
                     <div class="about-images">
                         <div class="about-image-item" onclick="showModal('employee1Modal')">
-                            <img src="img/Директор.jpg" alt="Артем Лаптев">
+                            <img src="img/о нас/александр егоров.jpeg" alt="Алексадр Егоров">
                             
                         </div>
                         <div class="about-image-item" onclick="showModal('employee2Modal')">
-                            <img src="img/дизайнер.jpg" alt="Богдан Назмиев">
+                            <img src="img/о нас/павел островский.jpg" alt="Павел Островский">
                             
                         </div>
                         <div class="about-image-item" onclick="showModal('employee3Modal')">
-                            <img src="img/менеджер.jpg" alt="Богдан Назмиев">
+                            <img src="img/о нас/роман струшин.jpg" alt="Роман Струшин">
                            
                         </div>
                     </div>
@@ -930,7 +1205,13 @@
                                 </div>
                             </div>
                             
-                            <div class="stock-info" id="stockInfo"></div>
+                            <div class="stock-info" id="stockInfo">
+                                <!-- Будет заполнено динамически -->
+                            </div>
+                            
+                            <div class="admin-controls" id="adminStockControls" style="display: none;">
+                                <!-- Контролы для администратора будут добавлены динамически -->
+                            </div>
                             
                             <div class="action-buttons">
                                 <button class="add-to-cart-btn" onclick="addToCartFromModal()">Добавить в корзину</button>
@@ -940,37 +1221,37 @@
                     </div>
                     
                     <div class="product-info-tabs">
-                        <div class="tabs">
-                            <div class="tab active" onclick="switchTab(0)">Описание</div>
-                            <div class="tab" onclick="switchTab(1)">Характеристики</div>
-                            <div class="tab" onclick="switchTab(2)">Отзывы</div>
-                            <div class="tab" onclick="switchTab(3)">Доставка и возврат</div>
-                        </div>
-                        
-                        <div class="tab-content active" id="descriptionTab">
-                            <!-- Содержимое будет заполняться динамически -->
-                        </div>
-                        
-                        <div class="tab-content" id="specsTab">
-                            <!-- Содержимое будет заполняться динамически -->
-                        </div>
-                        
-                        <div class="tab-content" id="reviewsTab">
-                            <h3>Отзывы покупателей</h3>
-                            <div id="reviewsList">
-                                <!-- Отзывы будут загружаться динамически -->
-                            </div>
-                            <div id="reviewFormContainer">
-                                <!-- Форма отзыва будет загружаться динамически -->
-                            </div>
-                        </div>
-                        
-                        <div class="tab-content" id="deliveryTab">
-                            <h3>Условия доставки и возврата</h3>
-                            <p>Мы осуществляем доставку по всему миру. Срок доставки зависит от вашего местоположения и составляет от 3 до 14 рабочих дней.</p>
-                            <p>Вы можете вернуть товар в течение 30 дней с момента получения, если он не был в употреблении и сохранены все бирки и упаковка.</p>
-                        </div>
-                    </div>
+    <div class="tabs-row">
+        <button class="tab-button active" data-tab="descriptionTab">Описание</button>
+        <button class="tab-button" data-tab="specsTab">Характеристики</button>
+        <button class="tab-button" data-tab="reviewsTab">Отзывы</button>
+        <button class="tab-button" data-tab="deliveryTab">Доставка и возврат</button>
+    </div>
+    
+    <div class="tab-content active" id="descriptionTab">
+        <!-- Содержимое будет заполняться динамически -->
+    </div>
+    
+    <div class="tab-content" id="specsTab">
+        <!-- Содержимое будет заполняться динамически -->
+    </div>
+    
+    <div class="tab-content" id="reviewsTab">
+        <h3>Отзывы покупателей</h3>
+        <div id="reviewsList">
+            <!-- Отзывы будут загружаться динамически -->
+        </div>
+        <div id="reviewFormContainer">
+            <!-- Форма отзыва будет загружаться динамически -->
+        </div>
+    </div>
+    
+    <div class="tab-content" id="deliveryTab">
+        <h3>Условия доставки и возврата</h3>
+        <p>Мы осуществляем доставку по всему миру. Срок доставки зависит от вашего местоположения и составляет от 3 до 14 рабочих дней.</p>
+        <p>Вы можете вернуть товар в течение 30 дней с момента получения, если он не был в употреблении и сохранены все бирки и упаковка.</p>
+    </div>
+</div>
                     
                     <div class="related-products">
                         <h3 class="related-title">Связанные товары</h3>
@@ -1045,12 +1326,12 @@
             <span class="close-modal" onclick="closeModal('employee1Modal')">&times;</span>
             <div class="employee-details">
                 <div class="employee-image">
-                    <img src="img/Директор.jpg" alt="Артем Лаптев">
+                    <img src="img/о нас/александр егоров.jpeg" alt="Александр Егоров">
                 </div>
-                <h2 class="employee-name">Артем Лаптев</h2>
+                <h2 class="employee-name">Александр Егоров</h2>
                 <div class="employee-position">Основатель и генеральный директор</div>
                 <div class="employee-description">
-                    <p>Артем основал "Витрину моды" в 2025 году с целью создания бренда, который объединяет стиль, качество и доступность. Она имеет более 10 лет опыта в индустрии моды и управления розничными сетями.</p>
+                    <p>Алексадр основал "Витрину моды" в 2025 году с целью создания бренда, который объединяет стиль, качество и доступность. Она имеет более 10 лет опыта в индустрии моды и управления розничными сетями.</p>
                     <p>Под руководством Анны компания выросла от небольшого бутика до одного из ведущих онлайн-магазинов одежды в России. Она отвечает за общее стратегическое развитие компании и формирование ассортимента.</p>
                 </div>
                 <div class="employee-skills">
@@ -1064,7 +1345,7 @@
                 </div>
                 <div class="employee-contact">
                     <h3>Контакты</h3>
-                    <p>Email: artem@vitrina-mody.ru</p>
+                    <p>Email: alexandr@vitrina-mody.ru</p>
                     <p>Телефон: +7 (495) 123-45-67 (доб. 101)</p>
                 </div>
             </div>
@@ -1077,13 +1358,13 @@
             <span class="close-modal" onclick="closeModal('employee2Modal')">&times;</span>
             <div class="employee-details">
                 <div class="employee-image">
-                    <img src="img/дизайнер.jpg" alt="Дмитрий Швагирев">
+                    <img src="img/о нас/павел островский.jpg" alt="Павел Островский">
                 </div>
-                <h2 class="employee-name">Дмитрий Швагирев</h2>
+                <h2 class="employee-name">Павел Островский</h2>
                 <div class="employee-position">Главный дизайнер</div>
                 <div class="employee-description">
-                    <p>Дмитрий присоединился к команде "Витрины моды" в 2019 году и с тех пор возглавляет дизайнерское направление. Он отвечает за разработку дизайна одежды и контроль качества всех коллекций.</p>
-                    <p>Его работы были отмечены на нескольких международных конкурсах, включая премию "Лучший молодой дизайнер" в 2021 году. Дмитрий постоянно следит за мировыми трендами и внедряет инновационные подходы в дизайне.</p>
+                    <p>Павел присоединился к команде "Витрины моды" в 2019 году и с тех пор возглавляет дизайнерское направление. Он отвечает за разработку дизайна одежды и контроль качества всех коллекций.</p>
+                    <p>Его работы были отмечены на нескольких международных конкурсах, включая премию "Лучший молодой дизайнер" в 2021 году. Павел постоянно следит за мировыми трендами и внедряет инновационные подходы в дизайне.</p>
                 </div>
                 <div class="employee-skills">
                     <h3>Образование и достижения</h3>
@@ -1109,13 +1390,13 @@
             <span class="close-modal" onclick="closeModal('employee3Modal')">&times;</span>
             <div class="employee-details">
                 <div class="employee-image">
-                    <img src="img/менеджер.jpg" alt="Богдан Назмиев">
+                    <img src="img/о нас/роман струшин.jpg" alt="Роман Струшин">
                 </div>
-                <h2 class="employee-name">Богдан Назмиев</h2>
+                <h2 class="employee-name">Роман Струшин</h2>
                 <div class="employee-position">Менеджер по продажам и клиентскому сервису</div>
                 <div class="employee-description">
-                    <p>Богдан работает в компании с 2020 года и отвечает за развитие продаж и клиентский сервис. Она создала и внедрила система поддержки клиентов, которая позволяет оперативно решать все вопросы покупателей.</p>
-                    <p>Благодаря ее усилиям, уровень удовлетворенности клиентов вырос на 40% за последний год. Богдан всегда готова помочь клиентам с выбором и ответить на все вопросы, связанные с покупками в нашем магазине.</p>
+                    <p>Роман работает в компании с 2020 года и отвечает за развитие продаж и клиентский сервис. Она создала и внедрила система поддержки клиентов, которая позволяет оперативно решать все вопросы покупателей.</p>
+                    <p>Благодаря ее усилиям, уровень удовлетворенности клиентов вырос на 40% за последний год. Роман всегда готова помочь клиентам с выбором и ответить на все вопросы, связанные с покупками в нашем магазине.</p>
                 </div>
                 <div class="employee-skills">
                     <h3>Образование и достижения</h3>
@@ -1285,14 +1566,14 @@
                 </ul>
                 
                 <h3>Обмен товара</h3>
-                <p>Если вам не подошел размер или цвет, мы можем обменять товар на другой без дополнительной оплаты доставки.</p>
+                    <p>Если вам не подошел размер или цвет, мы можем обменять товар на другой без дополнительной оплаты доставки.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Глобальная переменная для отслеживания номера заказа
-        let orderCounter = parseInt(localStorage.getItem('orderCounter')) || 1000;
+        // Глобальная переменная для отслеживания номера заказа (начинаем с 1)
+        let orderCounter = parseInt(localStorage.getItem('orderCounter')) || 1;
         
         // Переменная для отслеживания текущей страницы
         let currentPage = 1;
@@ -1306,12 +1587,12 @@
                 price: 3599,
                 oldPrice: 3999,
                 discount: 10,
-                image: "https://static.street-beat.ru/upload/resize_cache/iblock/81e/666_666_1/28jujdmf0a8ua8bunfh9ax94npq8fewv.jpg",
+                image: "img/ФутболкаPuma/1.webp",
                 images: [
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/81e/666_666_1/28jujdmf0a8ua8bunfh9ax94npq8fewv.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/be6/666_666_1/8jvnefwajkal6isfd2v5hvtb09jed632.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/86d/666_666_1/oo3no4oauedn5my3s3bxif76jy4dbel2.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/d1f/666_666_1/10em31vkwses5cjf3ekt9bxh3kgptet2.jpg"
+                    "img/ФутболкаPuma/1.webp",
+                    "img/ФутболкаPuma/2.webp",
+                    "img/ФутболкаPuma/3.webp",
+                    "img/ФутболкаPuma/4.webp"
                 ],
                 description: "Современная футболка из инновационного материала, который обеспечивает комфорт в любых условиях. Идеально подходит для активного образа жизни и повседневной носки.",
                 fullDescription: "<p>Футболка Puma создана с использованием передовых технологий в текстильной промышленности. Она сочетает в себе стильный дизайн и функциональность.</p><p>Основные преимущества:</p><ul><li>Дышащий материал, обеспечивающий комфорт в любое время года</li><li>Антибактериальная пропитка, предотвращающая появление неприятных запахов</li><li>Устойчивость к деформации после многократных стирок</li><li>Экологичное производство</li></ul>",
@@ -1330,12 +1611,12 @@
                 price: 6799,
                 oldPrice: 7999,
                 discount: 15,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-z/wc1000/7663205231.jpg",
+                image: "img/ДжинсыLevis/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-z/wc1000/7663205231.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-3/wc1000/7663205199.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-b/wc1000/7663205207.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-j/wc1000/7663205215.jpg"
+                    "img/ДжинсыLevis/1.webp",
+                    "img/ДжинсыLevis/2.webp",
+                    "img/ДжинсыLevis/3.webp",
+                    "img/ДжинсыLevis/4.webp"
                 ],
                 description: "Стильные джинсы Levi's с современным кроем. Идеальное сочетание комфорта и стиля для повседневной носки.",
                 fullDescription: "<p>Джинсы Levi's созданы для тех, кто ценит комфорт и стиль. Они изготовлены из высококачественного денима с добавлением эластана для идеальной посадки.</p><p>Особенности:</p><ul><li>Удобная посадка по фигуре</li><li>Прочный материал, устойчивый к износу</li><li>Современный дизайн</li><li>Подходят для любого случая</li></ul>",
@@ -1354,12 +1635,12 @@
                 price: 10999,
                 oldPrice: 12999,
                 discount: 15,
-                image: "https://static.street-beat.ru/upload/resize_cache/iblock/0cb/666_666_1/4pdv2o6x1xt4tt01sb1gujidrz2yywvo.jpg",
+                image: "img/КурткаNike/1.webp",
                 images: [
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/0cb/666_666_1/4pdv2o6x1xt4tt01sb1gujidrz2yywvo.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/b0d/666_666_1/3nrv8urh62bj9pgbi0dc8kx79m9jofey.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/6b5/666_666_1/p6jm2fmf0foqqhcamqsy2gkzn6z1igkw.jpg",
-                     "https://static.street-beat.ru/upload/resize_cache/iblock/7aa/666_666_1/y9cjv45menae9m8ca33kj8aw6q34851m.jpg"
+                    "img/КурткаNike/1.webp",
+                    "img/КурткаNike/2.webp",
+                    "img/КурткаNike/3.webp",
+                     "img/КурткаNike/4.webp"
                 ],
                 description: "Инновационная куртка Nike с защитой от ветра и воды. Идеальный выбор для активного отдыха и городской среды.",
                 fullDescription: "<p>Куртка Nike разработана с использованием передовых технологий в области текстиля. Она обеспечивает надежную защиту от непогоды, оставаясь при этом легкой и удобной.</p><p>Ключевые особенности:</p><ul><li>Водоотталкивающая пропитка</li><li>Ветрозащитные свойства</li><li>Дышащий материал</li><li>Современный дизайн</li></ul>",
@@ -1378,12 +1659,12 @@
                 price: 5099,
                 oldPrice: 5999,
                 discount: 15,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-i/wc1000/8149790034.jpg",
+                image: "img/СвитшотAdidas/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-i/wc1000/8149790034.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/7722776310.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-c/wc1000/7722776316.jpg",
-                     "https://ir-3.ozone.ru/s3/multimedia-1-l/wc1000/7722776325.jpg"
+                    "img/СвитшотAdidas/1.webp",
+                    "img/СвитшотAdidas/2.webp",
+                    "img/СвитшотAdidas/3.webp",
+                    "img/СвитшотAdidas/4.webp"
                 ],
                 description: "Стильный свитшот Adidas с капюшоном. Идеален для прохладной погоды и повседневной носки.",
                 fullDescription: "<p>Свитшот Adidas сочетает в себе комфорт и современный дизайн. Изготовлен из мягкого флиса, который сохраняет тепло и обеспечивает комфорт в любую погоду.</p><p>Преимущества:</p><ul><li>Мягкий и теплый материал</li><li>Удобный капюшон</li><li>Современный дизайн</li><li>Прочный и долговечный</li></ul>",
@@ -1402,11 +1683,11 @@
                 price: 7999,
                 oldPrice: 8999,
                 discount: 11,
-                image: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/105/557/745/312/912/13/100028009058b0.jpg",
+                image: "img/ПлатьеPrada/1.jpg",
                 images: [
-                    "https://main-cdn.sbermegamarket.ru/big1/hlr-system/105/557/745/312/912/13/100028009058b0.jpg",
-                    "https://main-cdn.sbermegamarket.ru/big2/hlr-system/105/557/745/424/134/5/100028009058b1.jpg",
-                    "https://st-cdn.tsum.com/sig/d65553b799015027fac4c336c3a72bdc/width/763/i/07/d9/34/50/07d93450-def4-3703-a274-397c7e2ce748.jpg"
+                    "img/ПлатьеPrada/1.jpg",
+                    "img/ПлатьеPrada/2.jpg",
+                    "img/ПлатьеPrada/3.jpg"
                 ],
                 description: "Элегантное платье Prada, которое подчеркнет вашу женственность. Идеально для вечерних выходов и особых мероприятий.",
                 fullDescription: "<p>Платье Prada создано для современных женщин, ценящих стиль и комфорт. Оно выполнено из высококачественного материала, который приятен к телу и хорошо драпируется.</p><p>Особенности:</p><ul><li>Элегантный крой, подчеркивающий фигуру</li><li>Качественный материал, не требующий особого ухода</li><li>Универсальный дизайн для различных мероприятий</li><li>Доступно в нескольких цветах</li></ul>",
@@ -1425,12 +1706,12 @@
                 price: 4499,
                 oldPrice: 4999,
                 discount: 10,
-                image: "https://twinset.ru/upload/iblock/489/489d3b2791c2f3434463c16f89d85154.jpg",
+                image: "img/БлузкаTwinset/1.jpg",
                 images: [
-                    "https://twinset.ru/upload/iblock/489/489d3b2791c2f3434463c16f89d85154.jpg",
-                    "https://twinset.ru/upload/iblock/eb0/eb0746dc016f7b421cf922cf6c35a9f4.jpg",
-                    "https://twinset.ru/upload/iblock/c09/c09086f093b1d920c2aedf41f0e29ce0.jpg",
-                    "https://twinset.ru/upload/iblock/da6/da67ec2db1de4bcb849113e566a13036.jpg"
+                    "img/БлузкаTwinset/1.jpg",
+                    "img/БлузкаTwinset/2.jpg",
+                    "img/БлузкаTwinset/3.jpg",
+                    "img/БлузкаTwinset/4.jpg"
                 ],
                 description: "Стильная блузка из коллекции Twinset. Идеально сочетается с юбками и брюками для создания делового образа.",
                 fullDescription: "<p>Блузка Twinset создана для современных деловых женщин. Она сочетает в себе элегантность и комфорт, позволяя чувствовать себя уверенно в любой ситуации.</p><p>Преимущества:</p><ul><li>Удобный крой, не сковывающий движения</li><li>Качественный материал, устойчивый к сминанию</li><li>Классический дизайн, актуальный в любое время</li><li>Подходит для офиса и повседневной носки</li></ul>",
@@ -1449,12 +1730,12 @@
                 price: 5999,
                 oldPrice: 6999,
                 discount: 14,
-                image: "https://staticswa.golden-line.ru/images/catalog/JW5827W055_chernyi/JW5827W055_chernyi_1.jpg?v=1762433757",
+                image: "img/ЮбкаJuun/1.jpg",
                 images: [
-                    "https://staticswa.golden-line.ru/images/catalog/JW5827W055_chernyi/JW5827W055_chernyi_1.jpg?v=1762433757",
-                    "https://staticswa.golden-line.ru/images/catalog/JW5827W055_chernyi/JW5827W055_chernyi_2.jpg?v=1762433757",
-                    "https://staticswa.golden-line.ru/images/catalog/JW5827W055_chernyi/JW5827W055_chernyi_3.jpg?v=1762433757",
-                    "https://staticswa.golden-line.ru/images/catalog/JW5827W055_chernyi/JW5827W055_chernyi_4.jpg?v=1762433757"
+                    "img/ЮбкаJuun/1.jpg",
+                    "img/ЮбкаJuun/2.jpg",
+                    "img/ЮбкаJuun/3.jpg",
+                    "img/ЮбкаJuun/4.jpg"
                 ],
                 description: "Модная юбка Juun.J с современным принтом. Отлично подходит для создания стильных городских образов.",
                 fullDescription: "<p>Юбка Juun.J - это сочетание современного дизайна и комфорта. Она выполнена из качественного материала с уникальным принтом, который выделит вас из толпы.</p><p>Особенности:</p><ul><li>Современный дизайн с уникальным принтом</li><li>Удобная длина и крой</li><li>Качественный материал, сохраняющий форму</li><li>Универсальность для создания различных образов</li></ul>",
@@ -1473,12 +1754,11 @@
                 price: 12999,
                 oldPrice: 14999,
                 discount: 13,
-                image: "https://ba77b47c-88c1-44f2-87c2-1661d6cad36a.selcdn.net/media/products/2025/11/Vassa.31.10_1429.jpg",
+                image: "img/КостюмVassa/1.jpg",
                 images: [
-                    "https://ba77b47c-88c1-44f2/87c2-1661d6cad36a.selcdn.net/media/products/2025/11/Vassa.31.10_1429.jpg",
-                    "https://ba77b47c-88c1-44f2/87c2-1661d6cad36a.selcdn.net/media/products/2025/11/Vassa.31.10_1358.jpg",
-                    "https://ba77b47c-88c1-44f2/87c2-1661d6cad36a.selcdn.net/media/products/images/2025/11/Vassa.31.10_1305.jpg",
-                    "https://ba77b47c-88c1-44f2/87c2-1661d6cad36a.selcdn.net/media/products/images/2025/11/Vassa.31.10_1407.jpg"
+                    "img/КостюмVassa/1.jpg",
+                    "img/КостюмVassa/2.jpg",
+                    "img/КостюмVassa/3.jpg",
                 ],
                 description: "Элегантный костюм VASSA для деловых женщин. Сочетание стиля, комфорта и профессионализма.",
                 fullDescription: "<p>Костюм VASSA создан для успешных женщин, ценящих качество и стиль. Он идеально сидит по фигуре и подчеркивает деловые качества своей обладательницы.</p><p>Преимущества:</p><ul><li>Идеальная посадка по фигуре</li><li>Качественный материал премиум-класса</li><li>Классический дизайн с современными элементами</li><li>Подходит для важных встреч и мероприятий</li></ul>",
@@ -1497,12 +1777,12 @@
                 price: 2099,
                 oldPrice: 2499,
                 discount: 16,
-                image: "https://img.detmir.st/ktiPY65WRFoQpNZsYo0MlKHz7je9ozyB1_C9urMiQXc/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvNUd3TEtNMjRfallyQjVLVV9rbHBRNUZxQjMxNjN5TWV5RGZ6SzdzTDdFRT0uanBlZw.webp",
+                image: "img/ФутболкаTomTailor/1.webp",
                 images: [
-                    "https://img.detmir.st/ktiPY65WRFoQpNZsYo0MlKHz7je9ozyB1_C9urMiQXc/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvNUd3TEtNMjRfallyQjVLVV9rbHBRNUZxQjMxNjN5TWV5RGZ6SzdzTDdFRT0uanBlZw.webp",
-                    "https://img.detmir.st/ExQPtGimdmYdiGd20xvjIw-GB6s0fKb864aP7XeF7kg/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvZ2xXSU40V1JLMzlIWE1zZEQwalBQWHBKTC1PbGYyRmtJNVpoOUNqeERkZz0uanBlZw.webp",
-                    "https://img.detmir.st/53PmYClFWD-QXB69JWcRqHIv-Y1sLi6432wnnWVMn8w/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvSEN6ejZDWjRFcm5fd29zb25OamJtZWpHUXcyODZMRzdyUG1qUlpsUGYyMD0uanBlZw.webp",
-                    "https://img.detmir.st/wu2mJYdvMk12fTWxwChEaL3JYFiHs2c5lyaK8QPJJwo/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvVWkyWkJQSDJuem5uQ0tWUFByUi00elFRb1NhdTV4TjFkNm9BaEFycnBTOD0uanBlZw.webp"
+                    "img/ФутболкаTomTailor/1.webp",
+                    "img/ФутболкаTomTailor/2.webp",
+                    "img/ФутболкаTomTailor/3.webp",
+                    "img/ФутболкаTomTailor/4.webp"
                 ],
                 description: "Яркая и удобная футболка для детей. Изготовлена из гипоаллергенного материала, безопасного для детской кожи.",
                 fullDescription: "<p>Детская футболка Tom Tailor создана с учетом особенностей детской кожи. Она мягкая, дышащая и не вызывает раздражения.</p><p>Особенности:</p><ul><li>Гипоаллергенный материал</li><li>Яркий дизайн с детскими принтами</li><li>Удобная посадка, не сковывающая движения</li><li>Прочная ткань, выдерживающая активные игры</li></ul>",
@@ -1521,13 +1801,13 @@
                 price: 3299,
                 oldPrice: 3999,
                 discount: 17,
-                image: "https://img.detmir.st/zDXcPh0v5xsQCseZIq_tUt1lcRooC9AutOTvWylakUk/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvcFJmUkNON2c4aXVkZUJMR05Zck5Kd09JY0N6YmZNczFhbkd2cHl1Y3puQT0uanBlZw.webp",
+                image: "img/ДжинсыFuturino/1.webp",
                 images: [
-                    "https://img.detmir.st/zDXcPh0v5xsQCseZIq_tUt1lcRooC9AutOTvWylakUk/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvcFJmUkNON2c4aXVkZUJMR05Zck5Kd09JY0N6YmZNczFhbkd2cHl1Y3puQT0uanBlZw.webp",
-                    "https://img.detmir.st/Ih2t7h-huAE5NSVURID7DDuSokgGLgA2h015FjBe1Cg/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvS3o4OVM0U0RXeU4zaVY4VDVhT1pzU3cxMDFxM2ZtOFUzTmI2TUtZQjREYz0uanBlZw.webp",
-                    "https://img.detmir.st/oDgEaoUAJiZt7gzuWLKqh0kNp2Chn6LTp-kLMmAi45M/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvak9jWXA2d0ZkYWZMbS1NYzJBRGNOYmtNcFZQbjVOWGF0RU5fa2JqbGduYz0uanBlZw.webp",
-                    "https://img.detmir.st/5s6shyPcZetCwOkOcOwQaUKrnqz___czdq6_V76jPU8/rs:fit:700:700/g:sm/aHR0cHM6Ly9jYXRhbG9nLWNkbi5kZXRtaXIuc3QvbWVkaWEvZ2JJWGhyWXlaV1R4cTl2dVBmTXBod2VZd3JsdHAwNmxvQzJJR09CcVNWdz0uanBlZw.webp"
-                ],
+                    "img/ДжинсыFuturino/1.webp",
+                    "img/ДжинсыFuturino/2.webp",
+                    "img/ДжинсыFuturino/3.webp",
+                    "img/ДжинсыFuturino/4.webp"
+                                    ],
                 description: "Стильные джинсы для детей с удобным кроем. Идеальны для активного образа жизни и повседневной носки.",
                 fullDescription: "<p>Детские джинсы Futurino созданы с учетом активного образа жизни детей. Они прочные, удобные и сохраняют свой вид после множества стирок.</p><p>Преимущества:</p><ul><li>Удобный крой, не сковывающий движения</li><li>Прочный материал, устойчивый к износу</li><li>Эластичная ткань для максимального комфорта</li><li>Безопасные для детской кожи материалы</li></ul>",
                 specifications: {
@@ -1545,12 +1825,12 @@
                 price: 5599,
                 oldPrice: 6999,
                 discount: 20,
-                image: "https://kotofey.ru/images/cms/thumbs/99eeeb2116ba82928bb6c54f648b6db017048550/1863c1e5527711ee8c00ac1f6bd8bc11_1e723f71527711ee8c00ac1f6bd8bc11_556_555_jpg_5_80.jpg",
+                image: "img/КурткаКотофей/1.jpg",
                 images: [
-                    "https://kotofey.ru/images/cms/thumbs/99eeeb2116ba82928bb6c54f648b6db017048550/1863c1e5527711ee8c00ac1f6bd8bc11_1e723f71527711ee8c00ac1f6bd8bc11_556_555_jpg_5_80.jpg",
-                    "https://kotofey.ru/images/cms/thumbs/99eeeb2116ba82928bb6c54f648b6db017048550/1863c1e5527711ee8c00ac1f6bd8bc11_1e723fa8527711ee8c00ac1f6bd8bc11_556_555_jpg_5_80.jpg",
-                    "https://kotofey.ru/images/cms/thumbs/99eeeb2116ba82928bb6c54f648b6db017048550/1863c1e5527711ee8c00ac1f6bd8bc11_1e723fdf527711ee8c00ac1f6bd8bc11_556_555_jpg_5_80.jpg",
-                    "https://kotofey.ru/images/cms/thumbs/99eeeb2116ba82928bb6c54f648b6db017048550/1863c1e5527711ee8c00ac1f6bd8bc11_1e724016527711ee8c00ac1f6bd8bc11_556_555_jpg_5_80.jpg"
+                    "img/КурткаКотофей/1.jpg",
+                    "img/КурткаКотофей/2.jpg",
+                    "img/КурткаКотофей/3.jpg",
+                    "img/КурткаКотофей/4.jpg"
                 ],
                 description: "Теплая и стильная куртка для детей. Защищает от ветра и холода, обеспечивая комфорт в любую погоду.",
                 fullDescription: "<p>Детская куртка Котофей создана для активных детей, которые любят проводить время на свежем воздухе. Она надежно защищает от непогоды, оставаясь легкой и удобной.</p><p>Особенности:</p><ul><li>Водоотталкивающая пропитка</li><li>Теплый и дышащий материал</li><li>Удобные карманы для мелочей</li><li>Яркий дизайн, который нравится детям</li></ul>",
@@ -1569,12 +1849,12 @@
                 price: 2799,
                 oldPrice: 3499,
                 discount: 20,
-                image: "https://nsk-basket-cdn-07.geobasket.ru/vol4982/part498294/498294680/images/big/1.webp",
+                image: "img/СвитшотArtie/1.webp",
                 images: [
-                    "https://nsk-basket-cdn-07.geobasket.ru/vol4982/part498294/498294680/images/big/1.webp",
-                    "https://nsk-basket-cdn-07.geobasket.ru/vol4982/part498294/498294680/images/big/2.webp",
-                    "https://nsk-basket-cdn-07.geobasket.ru/vol4982/part498294/498294680/images/big/3.webp",
-                    "https://nsk-basket-cdn-07.geobasket.ru/vol4982/part498294/498294680/images/big/4.webp"
+                    "img/СвитшотArtie/1.webp",
+                    "img/СвитшотArtie/2.webp",
+                    "img/СвитшотArtie/3.webp",
+                    "img/СвитшотArtie/4.webp"
                 ],
                 description: "Мягкий и теплый свитшот для детей. Идеален для прохладной погоды и повседневной носки.",
                 fullDescription: "<p>Детский свитшот artie создан для комфорта и уюта. Он мягкий, теплый и не вызывает раздражения на детской коже.</p><p>Преимущества:</p><ul><li>Мягкий флисовый материал</li><li>Удобная посадка</li><li>Яркие цвета и веселые принты</li><li>Прочный, выдерживает многократные стирки</li></ul>",
@@ -1593,12 +1873,12 @@
                 price: 4999,
                 oldPrice: 5999,
                 discount: 17,
-                image: "https://static.street-beat.ru/upload/resize_cache/iblock/744/666_666_1/eap3l6f7hora2td6a2vecmo40z0c4ljp.jpg",
+                image: "img/РюкзакNike/1.jpg",
                 images: [
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/744/666_666_1/eap3l6f7hora2td6a2vecmo40z0c4ljp.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/033/666_666_1/00pxok5ciczm821sasmet173wce3xkwb.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/d6b/666_666_1/xryk2w6wyqtv38nvl2kgbpb1vjszh6pe.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/048/666_666_1/1crg1z8anyjvkvmqmhcsongcn44jexmm.jpg"
+                    "img/РюкзакNike/1.jpg",
+                    "img/РюкзакNike/2.jpg",
+                    "img/РюкзакNike/3.jpg",
+                    "img/РюкзакNike/4.jpg"
                 ],
                 description: "Стильный и функциональный рюкзак Nike. Идеально подходит для повседневного использования и путешествий.",
                 fullDescription: "<p>Рюкзак Nike сочетает в себе современный дизайн и практичность. Он имеет несколько отделений для удобного хранения вещей и эргономичные лямки для комфортной переноски.</p><p>Особенности:</p><ul><li>Вместительное основное отделение</li><li>Карман для ноутбука до 15 дюймов</li><li>Водоотталкивающая пропитка</li><li>Эргономичные лямки с мягкой подкладкой</li></ul>",
@@ -1617,12 +1897,12 @@
                 price: 10999,
                 oldPrice: 12999,
                 discount: 15,
-                image: "https://static.alltime.ru/obj/catalog/watch/casio/img/big/GA-2100-1AER.jpg",
+                image: "img/ЧасыGshok/1.jpg",
                 images: [
-                    "https://static.alltime.ru/obj/catalog/watch/casio/img/big/GA-2100-1AER.jpg",
-                    "https://static.alltime.ru/obj/catalog/watch/casio/img/big/GA-2100-1AER__1.jpg",
-                    "https://static.alltime.ru/obj/catalog/watch/casio/img/big/GA-2100-1AER__4.jpg",
-                    "https://static.alltime.ru/obj/catalog/watch/casio/img/big/GA-2100-1AER__5.jpg"
+                    "img/ЧасыGshok/1.jpg",
+                    "img/ЧасыGshok/2.jpg",
+                    "img/ЧасыGshok/3.jpg",
+                    "img/ЧасыGshok/4.jpg"
                 ],
                 description: "Современные умные часы с множеством функций. Отслеживают активность, уведомления и многое другое.",
                 fullDescription: "<p>Часы G-SHOCK - это не просто аксессуар, а умное устройство, которое поможет вам в повседневной жизни. Они сочетают в себе стильный дизайн и передовые технологии.</p><p>Функции:</p><ul><li>Отслеживание физической активности</li><li>Уведомления о звонках и сообщениях</li><li>Мониторинг сна и пульса</li><li>Водонепроницаемость</li></ul>",
@@ -1641,11 +1921,11 @@
                 price: 6399,
                 oldPrice: 7999,
                 discount: 20,
-                image: "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/4c3/1008_800_e9d2/51540170299.jpg",
+                image: "img/ОчкиUvex/1.jpg",
                 images: [
-                    "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/4c3/1008_800_e9d2/51540170299.jpg",
-                    "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/4c8/1008_800_1a9e/51540180299.jpg",
-                    "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/6c0/1008_800_00ca/51540190299.jpg"
+                    "img/ОчкиUvex/1.jpg",
+                    "img/ОчкиUvex/2.jpg",
+                    "img/ОчкиUvex/3.jpg"
                 ],
                 description: "Стильные солнцезащитные очки с защитой от ультрафиолета. Подходят для городского стиля и отдыха.",
                 fullDescription: "<p>Очки Uvex созданы для тех, кто ценит стиль и защиту глаз. Они обеспечивают 100% защиту от вредного ультрафиолетового излучения и имеют современный дизайн.</p><p>Преимущества:</p><ul><li>100% защита от UV-лучей</li><li>Прочные и легкие линзы</li><li>Стильная оправа из качественных материалов</li><li>Универсальный дизайн</li></ul>",
@@ -1664,12 +1944,12 @@
                 price: 3999,
                 oldPrice: 4999,
                 discount: 20,
-                image: "https://static.insales-cdn.com/images/products/1/2319/546679055/zip-pouchv2_0000_HeroBlack_1020x1200.png",
+                image: "img/КошелекAlpaka/1.png",
                 images: [
-                    "https://static.insales-cdn.com/images/products/1/2319/546679055/zip-pouchv2_0000_HeroBlack_1020x1200.png",
-                    "https://static.insales-cdn.com/images/products/1/2322/546679058/zip-pouchv2_0007_DSCF1218_1020x1200.jpg",
-                    "https://static.insales-cdn.com/images/products/1/2321/546679057/zip-pouchv2_0006_DSCF1236_1020x1200.jpg",
-                    "https://static.insales-cdn.com/images/products/1/2322/546679058/zip-pouchv2_0007_DSCF1218_1020x1200.jpg"
+                    "img/КошелекAlpaka/1.png",
+                    "img/КошелекAlpaka/2.jpg",
+                    "img/КошелекAlpaka/3.jpg",
+                    "img/КошелекAlpaka/4.jpg"
                 ],
                 description: "Компактный и функциональный кошелек из качественной кожи. Вмещает все необходимые карты и документы.",
                 fullDescription: "<p>Кошелек ALPAKA - это идеальное сочетание стиля и функциональности. Он выполнен из качественной кожи и имеет продуманную организацию внутреннего пространства.</p><p>Особенности:</p><ul><li>Отделения для банковских карт</li><li>Прозрачное окошко для удостоверения личности</li><li>Отделение для купюр</li><li>Компактный размер</li></ul>",
@@ -1688,11 +1968,11 @@
                 price: 2399,
                 oldPrice: 2999,
                 discount: 20,
-                image: "https://static.street-beat.ru/upload/resize_cache/iblock/380/666_666_1/ry3fsqil64la4x8kmzzhedmzqnlmwzir.jpg",
+                image: "img/КепкаAdidas/1.jpg",
                 images: [
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/380/666_666_1/ry3fsqil64la4x8kmzzhedmzqnlmwzir.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/c56/666_666_1/ge24gge1fgy1bmj0ptg77fi16d1e48xv.jpg",
-                    "https://static.street-beat.ru/upload/resize_cache/iblock/f59/666_666_1/oo1ip3okv07t0wa71as26xzbljfwk6u2.jpg"
+                    "img/КепкаAdidas/1.jpg",
+                    "img/КепкаAdidas/2.jpg",
+                    "img/КепкаAdidas/3.jpg"
                 ],
                 description: "Стильная кепка Adidas с регулируемым ремешком. Защищает от солнца и дополняет образ.",
                 fullDescription: "<p>Кепка Adidas - это не только защита от солнца, но и стильный аксессуар, который дополнит ваш образ. Она выполнена из качественного материала и имеет регулируемый ремешок для идеальной посадки.</p><p>Особенности:</p><ul><li>Качественный материал, сохраняющий форму</li><li>Регулируемый ремешок для комфортной посадки</li><li>Стильный дизайн с логотипом бренда</li><li>Подходит для мужчин и женщин</li></ul>",
@@ -1711,12 +1991,12 @@
                 price: 1999,
                 oldPrice: 2499,
                 discount: 20,
-                image: "https://a.lmcdn.ru/product/R/T/RTLAEK547401_28546884_3_v1_2x.jpg",
+                image: "img/БейсболкаNike/1.jpg",
                 images: [
-                    "https://a.lmcdn.ru/product/R/T/RTLAEK547401_28546884_3_v1_2x.jpg",
-                    "https://a.lmcdn.ru/product/R/T/RTLAEK547401_28583996_9_v1_2x.jpg",
-                    "https://a.lmcdn.ru/product/R/T/RTLAEK547401_28546883_2_v1_2x.jpg",
-                    "https://a.lmcdn.ru/product/R/T/RTLAEK547401_28546882_1_v1_2x.jpg"
+                    "img/БейсболкаNike/1.jpg",
+                    "img/БейсболкаNike/2.jpg",
+                    "img/БейсболкаNike/3.jpg",
+                    "img/БейсболкаNike/4.jpg"
                 ],
                 description: "Классическая бейсболка с современным дизайном. Идеальна для спортивного и повседневного стиля.",
                 fullDescription: "<p>Бейсболка Nike сочетает в себе классический дизайн и современные тенденции. Она защищает от солнца и добавляет завершающий штрих к вашему образ.</p><p>Преимущества:</p><ul><li>Классический дизайн с современными элементами</li><li>Удобная посадка</li><li>Качественный материал</li><li>Универсальность</li></ul>",
@@ -1735,12 +2015,12 @@
                 price: 2799,
                 oldPrice: 3499,
                 discount: 20,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-r/wc1000/7669933443.jpg",
+                image: "img/ШапкаHugo/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-r/wc1000/7669933443.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-j/wc1000/7669933507.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-5/wc1000/7669933457.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-i/wc1000/7669933470.jpg"
+                    "img/ШапкаHugo/1.webp",
+                    "img/ШапкаHugo/2.webp",
+                    "img/ШапкаHugo/3.webp",
+                    "img/ШапкаHugo/4.webp"
                 ],
                 description: "Теплая и стильная шапка для холодной погоды. Сохраняет тепло и дополняет зимний образ.",
                 fullDescription: "<p>Шапка HUGO создана для холодного времени года. Она мягкая, теплая и отлично сидит на голове, обеспечивая комфорт в любую погоду.</p><p>Особенности:</p><ul><li>Мягкий и теплый материал</li><li>Эластичная ткань для удобной посадки</li><li>Стильный дизайн</li><li>Подходит для мужчин и женщин</li></ul>",
@@ -1759,11 +2039,11 @@
                 price: 3199,
                 oldPrice: 3999,
                 discount: 20,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-3/wc1000/8351276727.jpg",
+                image: "img/ПанамаReebok/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-3/wc1000/8351276727.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-b/wc1000/7935773375.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-z/wc1000/7935773399.jpg"
+                    "img/ПанамаReebok/1.webp",
+                    "img/ПанамаReebok/2.webp",
+                    "img/ПанамаReebok/3.webp"
                 ],
                 description: "Элегантная панама для летнего сезона. Защищает от солнца и добавляет шарма вашему образ.",
                 fullDescription: "<p>Панама Reebok - это классический летний аксессуар, который никогда не выходит из моды. Она обеспечивает надежную защиту от солнца и подчеркивает ваш стиль.</p><p>Преимущества:</p><ul><li>Широкие поля для максимальной защиты</li><li>Легкий и дышащий материал</li><li>Классический дизайн</li><li>Подходит для пляжа и городской среды</li></ul>",
@@ -1783,11 +2063,10 @@
                 price: 3499,
                 oldPrice: 4299,
                 discount: 19,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-a/wc1000/6937178151.jpg",
+                image: "img/ШапкаNewera/1.webpg",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-a/wc1000/6937178151.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-8/wc1000/6937178178.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-7/wc1000/6937178195.jpg"
+                    "img/ШапкаNewera/1.webp",
+                    "img/ШапкаNewera/2.webp"
                 ],
                 description: "Стильная шапка New Era с фирменным логотипом. Идеально подходит для городского стиля.",
                 fullDescription: "<p>Шапка New Era - это сочетание стиля и комфорта. Она изготовлена из качественных материалов и имеет классический дизайн с фирменным логотипом.</p><p>Особенности:</p><ul><li>Качественный материал</li><li>Классический дизайн</li><li>Фирменный логотип</li><li>Подходит для любого времени года</li></ul>",
@@ -1806,11 +2085,12 @@
                 price: 2199,
                 oldPrice: 2799,
                 discount: 21,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6948817828.jpg",
+                image: "img/КепкаPuma/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6948817828.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-8/wc1000/6948817845.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-7/wc1000/6948817862.jpg"
+                    "img/КепкаPuma/1.webp",
+                    "img/КепкаPuma/2.webp",
+                    "img/КепкаPuma/3.webp",
+                    "img/КепкаPuma/4.webp"
                 ],
                 description: "Спортивная кепка Puma с современным дизайном. Отлично подходит для активного образа жизни.",
                 fullDescription: "<p>Кепка Puma создана для активных людей, которые ценят комфорт и стиль. Она имеет удобную посадку и современный дизайн.</p><p>Преимущества:</p><ul><li>Удобная посадка</li><li>Современный дизайн</li><li>Качественный материал</li><li>Подходит для спорта и повседневной носки</li></ul>",
@@ -1829,11 +2109,10 @@
                 price: 2599,
                 oldPrice: 3199,
                 discount: 19,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6937178229.jpg",
+                image: "img/БейсболкаUnderarmour/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6937178229.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-8/wc1000/6937178246.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-7/wc1000/6937178263.jpg"
+                    "img/БейсболкаUnderarmour/1.webp",
+                    "img/БейсболкаUnderarmour/2.webp"
                 ],
                 description: "Функциональная бейсболка Under Armour для спорта и активного отдыха.",
                 fullDescription: "<p>Бейсболка Under Armour создана для тех, кто ведет активный образ жизни. Она обеспечивает комфорт и защиту от солнца во время тренировок и прогулок.</p><p>Особенности:</p><ul><li>Функциональный дизайн</li><li>Защита от солнца</li><li>Удобная посадка</li><li>Подходит для спорта</li></ul>",
@@ -1852,11 +2131,11 @@
                 price: 3899,
                 oldPrice: 4599,
                 discount: 15,
-                image: "https://ir-3.ozone.ru/s3/multimedia-1-8/wc1000/6937178275.jpg",
+                image: "img/ПанамаLacoste/1.webp",
                 images: [
-                    "https://ir-3.ozone.ru/s3/multimedia-1-8/wc1000/6937178275.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-7/wc1000/6937178292.jpg",
-                    "https://ir-3.ozone.ru/s3/multimedia-1-6/wc1000/6937178309.jpg"
+                    "img/ПанамаLacoste/1.webp",
+                    "img/ПанамаLacoste/2.webp",
+                    "img/ПанамаLacoste/3.webp"
                 ],
                 description: "Элегантная панама Lacoste для летнего сезона. Стильный аксессуар для пляжа и города.",
                 fullDescription: "<p>Панама Lacoste - это классический летний аксессуар, который подчеркнет ваш стиль. Она изготовлена из качественных материалов и имеет фирменный логотип.</p><p>Преимущества:</p><ul><li>Качественные материалы</li><li>Стильный дизайн</li><li>Фирменный логотип</li><li>Подходит для пляжа и города</li></ul>",
@@ -2077,7 +2356,7 @@
 
                 // Обновляем отображение количества в модальном окне товара, если оно открыто
                 if (currentProduct && currentProduct.id === productId) {
-                    document.getElementById('stockInfo').textContent = `В наличии: ${product.stock} шт.`;
+                    updateStockInfoInModal(product.stock);
                     
                     // Если товар закончился, блокируем кнопку добавления в корзину
                     const addToCartBtn = document.querySelector('.add-to-cart-btn');
@@ -2096,6 +2375,52 @@
                 
                 // Обновляем отображение на главной странице
                 updateMainPageProductStock(productId, product.stock);
+            }
+        }
+
+        // Функция для обновления информации о наличии в модальном окне
+        function updateStockInfoInModal(stock) {
+            const stockInfo = document.getElementById('stockInfo');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (currentUser && currentUser.isAdmin) {
+                // Для администратора показываем с элементами управления
+                stockInfo.innerHTML = `
+                    <div>В наличии: <span class="stock-quantity">${stock}</span> шт.</div> 
+                    <div class="stock-control">
+                        
+                        <button class="stock-control-btn" onclick="increaseProductStock(${currentProduct.id})">+</button>
+                        <button class="stock-save-btn" onclick="saveProductStock(${currentProduct.id})">Сохранить</button>
+                    </div>
+                `;
+            } else {
+                // Для обычных пользователей просто текст
+                stockInfo.textContent = `В наличии: ${stock} шт.`;
+            }
+        }
+
+        // Функция для увеличения количества товара в наличии (для администратора)
+        function increaseProductStock(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                product.stock += 1;
+                updateStockInfoInModal(product.stock);
+            }
+        }
+
+       
+
+        // Функция для сохранения изменений количества товара (для администратора)
+        function saveProductStock(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                // Сохраняем в localStorage
+                saveProductStocks();
+                
+                // Обновляем отображение на главной странице
+                updateMainPageProductStock(productId, product.stock);
+                
+                alert(`Количество товара "${product.name}" обновлено. В наличии: ${product.stock} шт.`);
             }
         }
 
@@ -2276,98 +2601,106 @@
         }
 
         // Функция для обновления итоговой стоимости в корзине
-        function updateCartSummary() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const itemsCount = cart.reduce((total, item) => total + item.quantity, 0);
-            const itemsTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-            const deliveryCost = itemsTotal > 0 ? 500 : 0;
-            const taxAmount = Math.round(itemsTotal * 0.1); // 10% налог
-            const total = itemsTotal + deliveryCost + taxAmount;
-            
-            document.getElementById('cartItemsCount').textContent = itemsCount;
-            document.getElementById('cartItemsTotal').textContent = `${itemsTotal} ₽`;
-            document.getElementById('deliveryCost').textContent = `${deliveryCost} ₽`;
-            document.getElementById('taxAmount').textContent = `${taxAmount} ₽`;
-            document.getElementById('cartTotal').textContent = `${total} ₽`;
-        }
-
-        // Функция для отображения транзакций - ИСПРАВЛЕННАЯ ВЕРСИЯ
-        // Функция для отображения транзакций - ИСПРАВЛЕННАЯ ВЕРСИЯ
-function updateTransactionsDisplay() {
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const transactionsContainer = document.getElementById('transactionsContainer');
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+        // Функция для обновления итоговой стоимости в корзине
+function updateCartSummary() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const itemsCount = cart.reduce((total, item) => total + item.quantity, 0);
+    const itemsTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const deliveryCost = itemsTotal > 0 ? 500 : 0;
+    // Налог убран (было taxAmount)
+    const total = itemsTotal + deliveryCost;
     
-    if (transactionsContainer) {
-        if (orders.length === 0) {
-            transactionsContainer.innerHTML = `
-                <div class="no-transactions">
-                    <div class="no-transactions-icon"><img src="img/корзина_розовая.svg" width="100px" alt="транзакции"></div>
-                    <h3 class="no-transactions-title">Нет транзакций</h3>
-                    <p class="no-transactions-text">Пользователи еще не совершали покупки</p>
-                </div>
-            `;
-        } else {
-            let transactionsHTML = `
-                <table class="transactions-table">
-                    <thead>
-                        <tr>
-                            <th>ID заказа</th>
-                            <th>Пользователь</th>
-                            <th>Email</th>
-                            <th>Дата</th>
-                            <th>Товары</th>
-                            <th>Сумма</th>
-                            <th>Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            // Сортируем заказы по дате (от новых к старым)
-            const sortedOrders = orders.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            sortedOrders.forEach(order => {
-                // Находим пользователя по ID из заказа
-                const user = users.find(u => u.id === order.userId);
-                const userName = user ? `${user.firstName} ${user.lastName}` : 'Неизвестный пользователь';
-                const userEmail = user ? user.email : 'Неизвестный email';
-                
-                const orderDate = new Date(order.date);
-                const formattedDate = orderDate.toLocaleDateString('ru-RU', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                const itemsList = order.items.map(item => 
-                    `${item.name} (${item.size}) - ${item.quantity} шт.`
-                ).join('<br>');
-                
-                transactionsHTML += `
-                    <tr>
-                        <td>#${order.id}</td>
-                        <td>${userName}</td>
-                        <td>${userEmail}</td>
-                        <td>${formattedDate}</td>
-                        <td>${itemsList}</td>
-                        <td>${order.total}</td>
-                        <td><span class="transaction-status status-completed">${order.status}</span></td>
-                    </tr>
-                `;
-            });
-            
-            transactionsHTML += `
-                    </tbody>
-                </table>
-            `;
-            
-            transactionsContainer.innerHTML = transactionsHTML;
+    document.getElementById('cartItemsCount').textContent = itemsCount;
+    document.getElementById('cartItemsTotal').textContent = `${itemsTotal} ₽`;
+    document.getElementById('deliveryCost').textContent = `${deliveryCost} ₽`;
+    // Скрываем или удаляем строку с налогом
+    const taxRow = document.getElementById('taxAmount');
+    if (taxRow) {
+        // Находим родительскую строку (summary-row) и скрываем её
+        const taxRowParent = taxRow.closest('.summary-row');
+        if (taxRowParent) {
+            taxRowParent.style.display = 'none';
         }
     }
+    document.getElementById('cartTotal').textContent = `${total} ₽`;
 }
+
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ ТРАНЗАКЦИЙ
+        function updateTransactionsDisplay() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const transactionsContainer = document.getElementById('transactionsContainer');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            if (transactionsContainer) {
+                if (orders.length === 0) {
+                    transactionsContainer.innerHTML = `
+                        <div class="no-transactions">
+                            <div class="no-transactions-icon"><img src="img/корзина_розовая.svg" width="100px" alt="транзакции"></div>
+                            <h3 class="no-transactions-title">Нет транзакций</h3>
+                            <p class="no-transactions-text">Пользователи еще не совершали покупки</p>
+                        </div>
+                    `;
+                } else {
+                    let transactionsHTML = `
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>ID заказа</th>
+                                    <th>Пользователь</th>
+                                    <th>Email</th>
+                                    <th>Дата</th>
+                                    <th>Товары</th>
+                                    <th>Сумма</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    // Сортируем заказы по дате (от новых к старым)
+                    const sortedOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    sortedOrders.forEach(order => {
+                        // Находим пользователя по ID из заказа
+                        const user = users.find(u => u.id === order.userId);
+                        const userName = user ? `${user.firstName} ${user.lastName}` : 'Неизвестный пользователь';
+                        const userEmail = user ? user.email : 'Неизвестный email';
+                        
+                        const orderDate = new Date(order.date);
+                        const formattedDate = orderDate.toLocaleDateString('ru-RU', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        const itemsList = order.items.map(item => 
+                            `${item.name} (${item.size}) - ${item.quantity} шт.`
+                        ).join('<br>');
+                        
+                        transactionsHTML += `
+                            <tr>
+                                <td>#${order.id}</td>
+                                <td>${escapeHtml(userName)}</td>
+                                <td>${escapeHtml(userEmail)}</td>
+                                <td>${formattedDate}</td>
+                                <td>${itemsList}</td>
+                                <td>${order.total} ₽</td>
+                                <td><span class="transaction-status status-completed">${order.status}</span></td>
+                            </tr>
+                        `;
+                    });
+                    
+                    transactionsHTML += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    transactionsContainer.innerHTML = transactionsHTML;
+                }
+            }
+        }
 
         // Поиск товаров
         if (document.getElementById('searchInput')) {
@@ -2409,13 +2742,10 @@ function updateTransactionsDisplay() {
 
             // Закрытие результатов поиска при клике вне поля
             document.addEventListener('click', function(e) {
-    const modalTrigger = e.target.closest('[data-modal]');
-    if (modalTrigger) {
-        e.preventDefault();
-        const modalId = modalTrigger.getAttribute('data-modal');
-        showModal(modalId);
-    }
-});
+                if (!e.target.closest('.search-container')) {
+                    document.getElementById('searchResults').style.display = 'none';
+                }
+            });
         }
 
         // Фильтрация по категориям
@@ -2645,58 +2975,61 @@ function updateTransactionsDisplay() {
             return wishlist.some(item => item.id === productId);
         }
 
-// Показать модальное окно
-let scrollPosition = 0;
-function showModal(modalId) {
-    
-    // Сохраняем позицию скролла
-    scrollPosition = window.pageYOffset;
+        // Показать модальное окно
+        let scrollPosition = 0;
+        function showModal(modalId) {
+            
+            // Сохраняем позицию скролла
+            scrollPosition = window.pageYOffset;
 
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollPosition}px`;
-    document.body.style.width = '100%';
-    
-    document.getElementById(modalId).style.display = 'block';
-    
-const modalContent = document.querySelector(`#${modalId} .modal-content`);
-    if (modalContent) {
-        modalContent.style.overflowY = 'auto';
-        modalContent.style.webkitOverflowScrolling = 'touch';
-    }
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollPosition}px`;
+            document.body.style.width = '100%';
+            
+            document.getElementById(modalId).style.display = 'block';
+            
+            const modalContent = document.querySelector(`#${modalId} .modal-content`);
+            if (modalContent) {
+                modalContent.style.overflowY = 'auto';
+                modalContent.style.webkitOverflowScrolling = 'touch';
+            }
 
-    // Если открываем корзину, обновляем ее содержимое
-    if (modalId === 'cartModal') {
-        updateCartDisplay();
-    }
-    
-    // Если открываем избранное, обновляем его содержимое
-    if (modalId === 'wishlistModal') {
-        updateWishlistDisplay();
-    }
-    
-    // Если открываем профиль, инициализируем его
-    if (modalId === 'profileModal') {
-        initProfilePage();
-    }
-    
-    // Если открываем транзакции, обновляем их
-    if (modalId === 'transactionsModal') {
-        updateTransactionsDisplay();
-    }
-}
+            // Если открываем корзину, обновляем ее содержимое
+            if (modalId === 'cartModal') {
+                updateCartDisplay();
+            }
+            
+            // Если открываем избранное, обновляем его содержимое
+            if (modalId === 'wishlistModal') {
+                updateWishlistDisplay();
+            }
+            
+            // Если открываем профиль, инициализируем его
+            if (modalId === 'profileModal') {
+                initProfilePage();
+            }
+            
+            // Если открываем транзакции, обновляем их
+            if (modalId === 'transactionsModal') {
+                updateTransactionsDisplay();
+            }
+                        if (modalId === 'newsModal') {
+                loadNews();
+            }
+        }
 
-// Закрыть модальное окно
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-   // Разблокируем скролл body
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-     // Восстанавливаем позицию скролла
-    window.scrollTo(0, scrollPosition);
-}
+        // Закрыть модальное окно
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            // Разблокируем скролл body
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            // Восстанавливаем позицию скролла
+            window.scrollTo(0, scrollPosition);
+        }
 
         // Показать главную страницу
         function showMainPage() {
@@ -2732,7 +3065,9 @@ function closeModal(modalId) {
                     </div>
                 `;
                 document.getElementById('productDescription').innerHTML = `<p>${currentProduct.description}</p>`;
-                document.getElementById('stockInfo').textContent = `В наличии: ${currentProduct.stock} шт.`;
+                
+                // Обновляем информацию о наличии (с учетом прав администратора)
+                updateStockInfoInModal(currentProduct.stock);
                 
                 // Заполняем вкладку с описанием
                 document.getElementById('descriptionTab').innerHTML = `<h3>Подробное описание</h3>${currentProduct.fullDescription}`;
@@ -3381,145 +3716,159 @@ function closeModal(modalId) {
             });
         }
 
-        // Функция для загрузки истории заказов - ИСПРАВЛЕННАЯ ВЕРСИЯ
-        // Функция для загрузки истории заказов - ИСПРАВЛЕННАЯ ВЕРСИЯ
-function loadOrderHistory() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const container = document.getElementById('orderHistoryContainer');
-    
-    // Фильтруем заказы только текущего пользователя
-    const userOrders = orders.filter(order => order.userId === currentUser.id);
-    
-    if (userOrders.length === 0) {
-        container.innerHTML = '<p>У вас пока нет заказов.</p>';
-        return;
-    }
-    
-    // Сортируем заказы по дате (от новых к старым)
-    userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    container.innerHTML = userOrders.map(order => {
-        const orderDate = new Date(order.date);
-        const formattedDate = orderDate.toLocaleDateString('ru-RU', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        const itemsList = order.items.map(item => 
-            `${item.name} (размер: ${item.size}) - ${item.quantity} шт. x ${item.price} ₽`
-        ).join('<br>');
-        
-        return `
-            <div class="order-item">
-                <div class="order-header">
-                    <span class="order-date">${formattedDate}</span>
-                    <span class="order-status">${order.status}</span>
-                </div>
-                <div class="order-details">
-                    <p><strong>Заказ #${order.id}</strong></p>
-                    <p>${itemsList}</p>
-                    <p><strong>Итого: ${order.total} ₽</strong></p>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-        // Функции для страницы корзины
-        function initCartPage() {
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ИСТОРИИ ЗАКАЗОВ
+        function loadOrderHistory() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const container = document.getElementById('orderHistoryContainer');
             
-            if (!currentUser) {
-                showModal('loginModal');
+            // Фильтруем заказы только текущего пользователя
+            const userOrders = orders.filter(order => order.userId === currentUser.id);
+            
+            if (userOrders.length === 0) {
+                container.innerHTML = '<p>У вас пока нет заказов.</p>';
                 return;
             }
             
-            // Заполняем контактные данные
-            document.getElementById('checkoutEmail').value = currentUser.email || '';
-            document.getElementById('checkoutPhone').value = currentUser.phone || '';
-            document.getElementById('checkoutAddress').value = currentUser.address || '';
+            // Сортируем заказы по дате (от новых к старым)
+            userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // Обработчик оформления заказа
-            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('checkoutEmail').value;
-                const phone = document.getElementById('checkoutPhone').value;
-                const address = document.getElementById('checkoutAddress').value;
-                
-                if (!email || !phone || !address) {
-                    alert('Пожалуйста, заполните все контактные данные');
-                    return;
-                }
-                
-                // Получаем текущую корзину
-                const cart = JSON.parse(localStorage.getItem('cart')) || [];
-                
-                if (cart.length === 0) {
-                    alert('Ваша корзина пуста!');
-                    return;
-                }
-                
-                // Проверяем наличие товаров перед оформлением заказа
-                for (const item of cart) {
-                    const product = products.find(p => p.id === item.id);
-                    if (!product || product.stock < item.quantity) {
-                        alert(`Товар "${item.name}" недоступен в запрошенном количестве. В наличии: ${product ? product.stock : 0} шт.`);
-                        return;
-                    }
-                }
-                
-                // Создаем заказ с правильным ID и userId
-                const orderId = orderCounter++;
-                localStorage.setItem('orderCounter', orderCounter);
-                
-                const order = {
-                    id: orderId,
-                    date: new Date().toISOString(),
-                    items: [...cart], // копируем корзину
-                    total: document.getElementById('cartTotal').textContent,
-                    status: 'Оформлен',
-                    userId: currentUser.id // добавляем ID пользователя
-                };
-                
-                // Обновляем количество товаров в наличии
-                cart.forEach(cartItem => {
-                    updateProductStock(cartItem.id, cartItem.quantity);
+            container.innerHTML = userOrders.map(order => {
+                const orderDate = new Date(order.date);
+                const formattedDate = orderDate.toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
                 
-                // Получаем текущие заказы из localStorage
-                let orders = JSON.parse(localStorage.getItem('orders')) || [];
-                // Добавляем новый заказ
-                orders.push(order);
-                // Сохраняем обратно в localStorage
-                localStorage.setItem('orders', JSON.stringify(orders));
+                const itemsList = order.items.map(item => 
+                    `${item.name} (размер: ${item.size}) - ${item.quantity} шт. x ${item.price} ₽`
+                ).join('<br>');
                 
-                // Обновляем данные пользователя
-                const updatedUser = {
-                    ...currentUser,
-                    email: email,
-                    phone: phone,
-                    address: address
-                };
-                
-                localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-                
-                // В реальном приложении здесь была бы отправка данных на сервер
-                alert(`Заказ #${orderId} успешно оформлен! С вами свяжутся для подтверждения.`);
-                
-                // Очищаем корзину
-                localStorage.removeItem('cart');
-                updateCartCount();
-                updateCartDisplay();
-                
-                // Закрываем модальное окно
-                closeModal('cartModal');
-            });
+                return `
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-date">${formattedDate}</span>
+                            <span class="order-status">${order.status}</span>
+                        </div>
+                        <div class="order-details">
+                            <p><strong>Заказ #${order.id}</strong></p>
+                            <p>${itemsList}</p>
+                            <p><strong>Итого: ${order.total} ₽</strong></p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
+
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ СТРАНИЦЫ КОРЗИНЫ (оформление заказа)
+        // Функции для страницы корзины
+function initCartPage() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!currentUser) {
+        showModal('loginModal');
+        return;
+    }
+    
+    // Заполняем контактные данные
+    document.getElementById('checkoutEmail').value = currentUser.email || '';
+    document.getElementById('checkoutPhone').value = currentUser.phone || '';
+    document.getElementById('checkoutAddress').value = currentUser.address || '';
+    
+    // Обработчик оформления заказа
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('checkoutEmail').value;
+        const phone = document.getElementById('checkoutPhone').value;
+        const address = document.getElementById('checkoutAddress').value;
+        
+        if (!email || !phone || !address) {
+            alert('Пожалуйста, заполните все контактные данные');
+            return;
+        }
+        
+        // Получаем текущую корзину
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        if (cart.length === 0) {
+            alert('Ваша корзина пуста!');
+            return;
+        }
+        
+        // Проверяем наличие товаров перед оформлением заказа
+        for (const item of cart) {
+            const product = products.find(p => p.id === item.id);
+            if (!product || product.stock < item.quantity) {
+                alert(`Товар "${item.name}" недоступен в запрошенном количестве. В наличии: ${product ? product.stock : 0} шт.`);
+                return;
+            }
+        }
+        
+        // Получаем текущий счетчик заказов и увеличиваем его
+        let currentOrderCounter = parseInt(localStorage.getItem('orderCounter')) || 1;
+        const orderId = currentOrderCounter;
+        localStorage.setItem('orderCounter', currentOrderCounter + 1);
+        
+        // Получаем итоговую сумму из корзины
+        const itemsTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+        const deliveryCost = itemsTotal > 0 ? 500 : 0;
+        // Налог УБРАН - считаем только товары + доставка
+        const total = itemsTotal + deliveryCost;
+        
+        const order = {
+            id: orderId,
+            date: new Date().toISOString(),
+            items: [...cart],
+            total: total,
+            status: 'Оформлен',
+            userId: currentUser.id
+        };
+        
+        // Обновляем количество товаров в наличии
+        cart.forEach(cartItem => {
+            updateProductStock(cartItem.id, cartItem.quantity);
+        });
+        
+        // Получаем текущие заказы из localStorage
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        // Добавляем новый заказ
+        orders.push(order);
+        // Сохраняем обратно в localStorage
+        localStorage.setItem('orders', JSON.stringify(orders));
+        
+        // Обновляем данные пользователя
+        const updatedUser = {
+            ...currentUser,
+            email: email,
+            phone: phone,
+            address: address
+        };
+        
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        
+        // Обновляем пользователя в списке пользователей
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const userIndex = users.findIndex(u => u.id === currentUser.id);
+        if (userIndex !== -1) {
+            users[userIndex] = updatedUser;
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+        
+        alert(`Заказ #${orderId} успешно оформлен! С вами свяжутся для подтверждения.`);
+        
+        // Очищаем корзину
+        localStorage.removeItem('cart');
+        updateCartCount();
+        updateCartDisplay();
+        
+        // Закрываем модальное окно
+        closeModal('cartModal');
+    });
+}
 
         // Функции для страницы авторизации
         function initLoginPage() {
@@ -3629,13 +3978,13 @@ function loadOrderHistory() {
             const users = JSON.parse(localStorage.getItem('users')) || [];
             
             // Проверяем, есть ли уже администратор
-            const adminExists = users.some(user => user.email === 'artem@gmail.com');
+            const adminExists = users.some(user => user.email === 'artem@mail.ru');
             
             if (!adminExists) {
                 const adminUser = {
                     id: Date.now(),
-                    firstName: 'Администратор',
-                    lastName: 'Магазина',
+                    firstName: 'Артем',
+                    lastName: 'Администратор',
                     email: 'artem@mail.ru',
                     password: '12345',
                     phone: '',
@@ -3655,6 +4004,11 @@ function loadOrderHistory() {
             // Создаем администратора при первой загрузке
             createAdminUser();
             
+// Инициализация мобильного меню
+initMobileMenu();
+updateMobileMenuAuth();
+updateMobileCounters();
+
             // Загружаем состояния товаров
             loadProductStocks();
             
@@ -3695,9 +4049,283 @@ function loadOrderHistory() {
                 });
             });
         });
+                // Функция для загрузки и отображения постов в модальном окне новостей
+        function loadNews() {
+    const newsContainer = document.getElementById('newsContainer');
+    if (!newsContainer) return;
+    
+    // Загружаем новости из site_news (ключ, который использует vk.html)
+    let posts = JSON.parse(localStorage.getItem('site_news')) || [];
+    
+    // Если в site_news пусто, пробуем загрузить из vk_posts (для обратной совместимости)
+    if (posts.length === 0) {
+        posts = JSON.parse(localStorage.getItem('vk_posts')) || [];
+    }
+    
+    if (posts.length === 0) {
+        newsContainer.innerHTML = `
+            <div class="no-news">
+                <p>Пока нет новостей. Следите за обновлениями!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Сортируем по дате (новые сверху)
+    const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    newsContainer.innerHTML = '';
+    
+    sortedPosts.forEach(post => {
+        const postDate = new Date(post.date);
+        const formattedDate = postDate.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        
+        const newsCard = document.createElement('div');
+        newsCard.className = 'news-card';
+        
+        // Формируем HTML карточки
+        let cardHTML = '';
+        
+        // Добавляем изображение, если оно есть
+        let imageToShow = null;
+        if (post.imageUrl) {
+            imageToShow = post.imageUrl;
+        } else if (post.image) {
+            imageToShow = post.image;
+        } else if (post.photoIds && post.photoIds.length > 0) {
+            // Если есть photoIds, формируем URL
+            const photoId = post.photoIds[0];
+            imageToShow = `https://sun9-71.userapi.com/impg/${photoId.replace('_', '/')}.jpg`;
+        }
+        
+        if (imageToShow) {
+            cardHTML += `
+                <img src="${imageToShow}" alt="${escapeHtml(post.title)}" class="news-card-image" onerror="this.style.display='none'">
+            `;
+        }
+        
+        cardHTML += `
+            <div class="news-card-content">
+                <div class="news-card-date">
+                    📅 ${formattedDate}
+                </div>
+                <h3 class="news-card-title">${escapeHtml(post.title)}</h3>
+                <div class="news-card-text">${escapeHtml(post.content)}</div>
+        `;
+        
+        // Добавляем ссылку на пост ВК, если есть ID
+        if (post.vkPostId) {
+            cardHTML += `
+                <a href="https://vk.com/wall-233729508_${post.vkPostId}" target="_blank" class="news-card-link">
+                    Посмотреть в ВКонтакте →
+                </a>
+            `;
+        }
+        
+        cardHTML += `</div>`;
+        newsCard.innerHTML = cardHTML;
+        newsContainer.appendChild(newsCard);
+    });
+}
+// Функция для инициализации вкладок товара
+function initProductTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.removeEventListener('click', handleTabClick);
+        button.addEventListener('click', handleTabClick);
+    });
+}
+
+function handleTabClick(e) {
+    const tabId = e.target.getAttribute('data-tab');
+    if (!tabId) return;
+    
+    // Убираем активный класс у всех кнопок
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Добавляем активный класс текущей кнопке
+    e.target.classList.add('active');
+    
+    // Скрываем все вкладки
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Показываем выбранную вкладку
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.classList.add('active');
+    }
+}
+
+// Переопределяем функцию showProductModal для обновления вкладок
+const originalShowProductModal = window.showProductModal;
+window.showProductModal = function(productId) {
+    if (originalShowProductModal) originalShowProductModal(productId);
+    // Небольшая задержка для рендеринга DOM
+    setTimeout(() => {
+        initProductTabs();
+    }, 100);
+};
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showNewsModal() {
+    loadNews();
+    showModal('newsModal');
+}
+// ========== МОБИЛЬНОЕ МЕНЮ ==========
+function initMobileMenu() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const menuClose = document.getElementById('mobileMenuClose');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('mobileMenuOverlay');
+    const catalogToggle = document.getElementById('mobileCatalogToggle');
+    const catalogSubmenu = document.getElementById('mobileCatalogSubmenu');
+    
+    if (!menuToggle) return;
+    
+    function openMobileMenu() {
+        mobileMenu.classList.add('open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        // Закрываем подменю каталога при закрытии меню
+        if (catalogSubmenu) {
+            catalogSubmenu.classList.remove('open');
+            if (catalogToggle) catalogToggle.textContent = 'Каталог ▼';
+        }
+    }
+    
+    menuToggle.addEventListener('click', openMobileMenu);
+    if (menuClose) menuClose.addEventListener('click', closeMobileMenu);
+    if (overlay) overlay.addEventListener('click', closeMobileMenu);
+    
+    // Открытие/закрытие подменю каталога
+    if (catalogToggle && catalogSubmenu) {
+        catalogToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            catalogSubmenu.classList.toggle('open');
+            catalogToggle.textContent = catalogSubmenu.classList.contains('open') ? 'Каталог ▲' : 'Каталог ▼';
+        });
+    }
+}
+
+// Обновление мобильных счетчиков
+function updateMobileCounters() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    
+    const mobileCartCount = document.getElementById('mobileCartCount');
+    const mobileWishlistCount = document.getElementById('mobileWishlistCount');
+    
+    if (mobileCartCount) {
+        const totalCount = cart.reduce((total, item) => total + item.quantity, 0);
+        mobileCartCount.textContent = totalCount;
+    }
+    
+    if (mobileWishlistCount) {
+        mobileWishlistCount.textContent = wishlist.length;
+    }
+}
+
+// Обновление мобильного меню в зависимости от авторизации
+function updateMobileMenuAuth() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const mobileUserSection = document.getElementById('mobileUserSection');
+    const mobileAuthSection = document.getElementById('mobileAuthSection');
+    const mobileAdminSection = document.getElementById('mobileAdminSection');
+    const mobileLogoutItem = document.getElementById('mobileLogoutItem');
+    const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+    const mobileUserName = document.getElementById('mobileUserName');
+    
+    if (currentUser) {
+        if (mobileUserSection) mobileUserSection.style.display = 'block';
+        if (mobileAuthSection) mobileAuthSection.style.display = 'none';
+        if (mobileLogoutItem) mobileLogoutItem.style.display = 'block';
+        
+        if (mobileUserAvatar) {
+            if (currentUser.avatar) {
+                mobileUserAvatar.innerHTML = `<img src="${currentUser.avatar}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                mobileUserAvatar.textContent = currentUser.firstName ? currentUser.firstName.charAt(0) : 'П';
+            }
+        }
+        if (mobileUserName) mobileUserName.textContent = currentUser.firstName || 'Пользователь';
+        
+        // Админ-раздел
+        if (mobileAdminSection) {
+            mobileAdminSection.style.display = currentUser.isAdmin ? 'block' : 'none';
+        }
+    } else {
+        if (mobileUserSection) mobileUserSection.style.display = 'none';
+        if (mobileAuthSection) mobileAuthSection.style.display = 'block';
+        if (mobileLogoutItem) mobileLogoutItem.style.display = 'none';
+        if (mobileAdminSection) mobileAdminSection.style.display = 'none';
+    }
+}
+
+// Закрытие мобильного меню (глобальная функция)
+window.closeMobileMenu = function() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('mobileMenuOverlay');
+    if (mobileMenu) mobileMenu.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+};
+
+// Переопределяем существующие функции для обновления счетчиков
+const originalUpdateCartCount = updateCartCount;
+const originalUpdateWishlistCount = updateWishlistCount;
+
+window.updateCartCount = function() {
+    if (originalUpdateCartCount) originalUpdateCartCount();
+    updateMobileCounters();
+};
+
+window.updateWishlistCount = function() {
+    if (originalUpdateWishlistCount) originalUpdateWishlistCount();
+    updateMobileCounters();
+};
+
+// Переопределяем checkAuthStatus для обновления мобильного меню
+const originalCheckAuthStatus = checkAuthStatus;
+window.checkAuthStatus = function() {
+    if (originalCheckAuthStatus) originalCheckAuthStatus();
+    updateMobileMenuAuth();
+    updateMobileCounters();
+};
+
+
+
     </script>
+        <!-- Модальное окно новостей -->
+    <div id="newsModal" class="modal">
+        <div class="modal-content news-modal-content">
+            <span class="close-modal" onclick="closeModal('newsModal')">&times;</span>
+            <div class="news-page">
+                <div class="container">
+                    <h2 class="news-title">Новости и <span>акции</span></h2>
+                    <div id="newsContainer" class="news-container">
+                        <div class="loading-news">Загрузка новостей...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-
 </html>
-
-
